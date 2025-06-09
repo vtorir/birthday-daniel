@@ -34,14 +34,16 @@
             font-size: 2.2em;
         }
         
+        /* Стили для мяча - теперь с гарантированно работающей картинкой */
         .ball {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            background: url('https://www.freeiconspng.com/uploads/soccer-ball-icon-3.png') center/contain no-repeat;
+            width: 80px;
+            height: 80px;
+            background: url('https://cdn-icons-png.flaticon.com/512/53/53283.png') center/contain no-repeat;
             cursor: pointer;
             transition: transform 0.2s;
             filter: drop-shadow(0 0 8px #4fc3f7);
+            z-index: 100;
         }
         
         .ball:hover {
@@ -61,185 +63,59 @@
             box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
         }
         
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(79, 195, 247, 0.6);
-        }
-        
         .hidden {
             display: none;
         }
         
-        #musicBtn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.7);
-            color: #4fc3f7;
-            border: 2px solid #4fc3f7;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            z-index: 1000;
-        }
-        
-        .pulse {
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(79, 195, 247, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0); }
-        }
-        
-        .goal-text {
-            position: absolute;
-            font-size: 3em;
-            font-weight: bold;
-            color: #4fc3f7;
-            text-shadow: 0 0 15px white;
-            opacity: 0;
-            transition: all 0.5s;
-            pointer-events: none;
+        #gameArea {
+            position: relative;
+            height: 200px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container pulse">
+    <div class="container">
         <h1>⚽ Даниил, с Днём Рождения! ⚽</h1>
-        <p>Сегодня твой день — пусть будет как чемпионский матч!</p>
-        <p>Желаю рекордов на поле и в FIFA, крутых голов и побед!</p>
+        <p>Кликай по мячу, чтобы забить гол!</p>
         
-        <button id="startBtn">Начать праздник!</button>
-        
-        <div id="gameArea" class="hidden">
-            <p>Кликай по мячу, чтобы забить гол!</p>
+        <div id="gameArea">
             <div class="ball" id="ball"></div>
         </div>
     </div>
     
-    <div id="goalText" class="goal-text">ГОООЛ!</div>
-    
-    <button id="musicBtn">♪</button>
-    
     <audio id="bgMusic" loop>
-        <!-- Замени эту ссылку на свою музыку -->
-        <source src="dr.mp3" type="audio/mpeg">
-        Ваш браузер не поддерживает аудио.
+        <source src="your-music.mp3" type="audio/mpeg">
     </audio>
     
     <script>
-        // Элементы
-        const startBtn = document.getElementById('startBtn');
-        const gameArea = document.getElementById('gameArea');
         const ball = document.getElementById('ball');
-        const musicBtn = document.getElementById('musicBtn');
         const bgMusic = document.getElementById('bgMusic');
-        const goalText = document.getElementById('goalText');
         
-        // Запуск праздника
-        startBtn.addEventListener('click', function() {
-            startBtn.classList.add('hidden');
-            gameArea.classList.remove('hidden');
-            createConfetti();
-            try {
-                bgMusic.play();
-                musicBtn.textContent = '▮▮';
-            } catch(e) {
-                console.log("Автовоспроизведение заблокировано");
-            }
-            document.querySelector('.container').classList.remove('pulse');
-        });
-        
-        // Управление музыкой
-        let isMusicPlaying = false;
-        musicBtn.addEventListener('click', function() {
-            if(isMusicPlaying) {
-                bgMusic.pause();
-                musicBtn.textContent = '♪';
-            } else {
-                bgMusic.play();
-                musicBtn.textContent = '▮▮';
-            }
-            isMusicPlaying = !isMusicPlaying;
-        });
-        
-        // Игра с мячом
-        let score = 0;
-        ball.addEventListener('click', function() {
-            score++;
-            
-            // Анимация удара
-            ball.style.transform = 'translateY(-150px) rotate(720deg)';
-            
-            // Анимация "ГОООЛ!"
-            goalText.style.opacity = '1';
-            goalText.style.top = '30%';
-            goalText.style.left = '50%';
-            goalText.style.transform = 'translateX(-50%)';
-            
-            setTimeout(() => {
-                goalText.style.opacity = '0';
-                goalText.style.top = '40%';
-            }, 1000);
-            
-            setTimeout(() => {
-                ball.style.transform = '';
-                // Новое случайное положение
-                ball.style.left = Math.random() * 80 + 10 + '%';
-                ball.style.top = Math.random() * 50 + 30 + '%';
-                
-                if(score % 3 === 0) {
-                    createConfetti();
-                }
-            }, 800);
-        });
-        
-        // Конфетти эффект (синие тона)
-        function createConfetti() {
-            const colors = ['#4fc3f7', '#1976d2', '#64b5f6', '#90caf9', '#bbdefb'];
-            
-            for(let i = 0; i < 80; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'absolute';
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = Math.random() * 10 + 5 + 'px';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-20px';
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                confetti.style.zIndex = '1000';
-                confetti.style.opacity = Math.random() + 0.2;
-                
-                document.body.appendChild(confetti);
-                
-                // Анимация падения
-                const duration = Math.random() * 3 + 2;
-                confetti.style.transition = `top ${duration}s linear, transform ${duration}s ease-out, opacity ${duration}s`;
-                
-                setTimeout(() => {
-                    confetti.style.top = '100vh';
-                    confetti.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
-                    confetti.style.opacity = '0';
-                    
-                    // Удаление после анимации
-                    setTimeout(() => {
-                        confetti.remove();
-                    }, duration * 1000);
-                }, 10);
-            }
-        }
-        
-        // Стартовая позиция мяча
+        // Стартовая позиция мяча (центр игровой области)
         ball.style.left = '50%';
-        ball.style.top = '60%';
+        ball.style.top = '50%';
         ball.style.transform = 'translate(-50%, -50%)';
+        
+        // Обработчик клика по мячу
+        ball.addEventListener('click', function() {
+            // Анимация удара
+            ball.style.transform = 'translate(-50%, -150%) rotate(360deg)';
+            
+            setTimeout(() => {
+                // Возвращаем мяч в центр после удара
+                ball.style.transform = 'translate(-50%, -50%)';
+            }, 500);
+            
+            // Воспроизводим звук удара (можно заменить)
+            new Audio('https://www.soundjay.com/misc/sounds/bubble-pop-1.mp3').play();
+        });
+        
+        // Автовоспроизведение музыки после первого клика
+        document.body.addEventListener('click', function initMusic() {
+            bgMusic.play();
+            document.body.removeEventListener('click', initMusic);
+        }, { once: true });
     </script>
 </body>
 </html>

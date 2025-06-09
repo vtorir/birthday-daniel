@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Даниилу с ДР!</title>
+    <title>Данюшке с ДР!</title>
     <style>
         body {
             margin: 0;
@@ -25,6 +25,7 @@
             overflow: hidden;
             border: 3px solid #4fc3f7;
             box-shadow: 0 0 25px #4fc3f7;
+            z-index: 10;
         }
         
         h1 {
@@ -44,7 +45,7 @@
             filter: drop-shadow(0 0 8px #4fc3f7);
             z-index: 100;
             left: 50%;
-            top: calc(50% + 20px); /* На 20px ниже центра */
+            top: calc(50% + 20px);
             transform: translate(-50%, -50%);
         }
         
@@ -87,16 +88,36 @@
             top: 30%;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 150;
         }
         
         #startBtn {
             margin-bottom: 30px;
         }
+        
+        .wish {
+            position: absolute;
+            color: #fff;
+            text-shadow: 0 0 5px #4fc3f7;
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+            z-index: 50;
+            opacity: 0.9;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            z-index: 5;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚽ Даниил, с Днём Рождения! ⚽</h1>
+        <h1>⚽ Данюшка, с Днём Рождения! ⚽</h1>
         <button id="startBtn">Запустить праздник!</button>
         
         <div id="gameArea" class="hidden">
@@ -117,6 +138,30 @@
         const gameArea = document.getElementById('gameArea');
         const goalText = document.getElementById('goalText');
         
+        // Список пожеланий
+        const wishes = [
+            "Крутых голов!",
+            "Много побед!",
+            "Крепкого здоровья!",
+            "Отличного настроения!",
+            "Исполнения мечт!",
+            "Много радости!",
+            "Крутых моментов!",
+            "Футбольных триумфов!",
+            "Верных друзей!",
+            "Ярких эмоций!",
+            "Классных подарков!",
+            "Успехов в FIFA!",
+            "Море счастья!",
+            "Креативных идей!",
+            "Финансового роста!",
+            "Крутых путешествий!",
+            "Личных рекордов!",
+            "Вдохновения!",
+            "Удачи во всем!",
+            "Много любви!"
+        ];
+        
         // Показываем игровую область при нажатии кнопки
         startBtn.addEventListener('click', function() {
             startBtn.classList.add('hidden');
@@ -134,8 +179,8 @@
                 goalText.style.opacity = '0';
             }, 1000);
             
-            // Запускаем конфетти
-            createConfetti();
+            // Запускаем конфетти и пожелания
+            createConfettiAndWishes();
             
             // Включаем музыку
             bgMusic.play();
@@ -146,34 +191,61 @@
             }, 500);
         });
         
-        // Функция конфетти
-        function createConfetti() {
-            const colors = ['#4fc3f7', '#1976d2', '#64b5f6', '#90caf9'];
+        // Функция для создания конфетти и пожеланий
+        function createConfettiAndWishes() {
+            const colors = ['#4fc3f7', '#1976d2', '#64b5f6', '#90caf9', '#bbdefb', '#ffffff'];
             
+            // Создаем 100 конфетти
             for(let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'absolute';
-                confetti.style.width = '10px';
-                confetti.style.height = '10px';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-10px';
-                confetti.style.borderRadius = '50%';
-                
-                document.body.appendChild(confetti);
-                
-                const duration = Math.random() * 3 + 2;
-                confetti.style.transition = `top ${duration}s linear, transform ${duration}s ease-out`;
+                createParticle(false);
+            }
+            
+            // Создаем 20 пожеланий
+            for(let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    createParticle(true);
+                }, i * 100);
+            }
+        }
+        
+        // Создание частицы (конфетти или пожелания)
+        function createParticle(isWish) {
+            const particle = document.createElement('div');
+            const color = isWish ? '#ffffff' : ['#4fc3f7', '#1976d2', '#64b5f6', '#90caf9'][Math.floor(Math.random() * 4)];
+            
+            if(isWish) {
+                particle.className = 'wish';
+                particle.textContent = wishes[Math.floor(Math.random() * wishes.length)];
+                particle.style.fontSize = (Math.random() * 10 + 14) + 'px';
+                particle.style.color = `hsl(${Math.random() * 60 + 180}, 100%, 70%)`;
+            } else {
+                particle.className = 'confetti';
+                particle.style.backgroundColor = color;
+                particle.style.width = (Math.random() * 10 + 5) + 'px';
+                particle.style.height = particle.style.width;
+            }
+            
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = '-30px';
+            
+            document.body.appendChild(particle);
+            
+            const duration = Math.random() * 3 + 2;
+            const delay = Math.random() * 1;
+            const endRotation = Math.random() * 720;
+            const endX = (Math.random() * 200 - 100) + 'px';
+            
+            particle.style.transition = `all ${duration}s cubic-bezier(0.1, 0.8, 0.3, 1) ${delay}s`;
+            
+            setTimeout(() => {
+                particle.style.top = '100vh';
+                particle.style.transform = `rotate(${endRotation}deg) translateX(${endX})`;
+                particle.style.opacity = '0';
                 
                 setTimeout(() => {
-                    confetti.style.top = '100vh';
-                    confetti.style.transform = 'rotate(720deg)';
-                    
-                    setTimeout(() => {
-                        confetti.remove();
-                    }, duration * 1000);
-                }, 10);
-            }
+                    particle.remove();
+                }, duration * 1000);
+            }, 10);
         }
     </script>
 </body>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Даниилу с ДР!</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #4fc3f7;
+            box-shadow: 0 0 25px #4fc3f7;
+        }
+        
+        h1 {
+            color: #4fc3f7;
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.7);
+            margin-bottom: 20px;
+            font-size: 2.2em;
+        }
+        
+        .ball {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: url('https://www.freeiconspng.com/uploads/soccer-ball-icon-3.png') center/contain no-repeat;
+            cursor: pointer;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 0 8px #4fc3f7);
+        }
+        
+        .ball:hover {
+            transform: scale(1.2);
+        }
+        
+        button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(to right, #4fc3f7, #1976d2);
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(79, 195, 247, 0.6);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #musicBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #4fc3f7;
+            border: 2px solid #4fc3f7;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(79, 195, 247, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0); }
+        }
+        
+        .goal-text {
+            position: absolute;
+            font-size: 3em;
+            font-weight: bold;
+            color: #4fc3f7;
+            text-shadow: 0 0 15px white;
+            opacity: 0;
+            transition: all 0.5s;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container pulse">
+        <h1>⚽ Даниил, с Днём Рождения! ⚽</h1>
+        <p>Сегодня твой день — пусть будет как чемпионский матч!</p>
+        <p>Желаю рекордов на поле и в FIFA, крутых голов и побед!</p>
+        
+        <button id="startBtn">Начать праздник!</button>
+        
+        <div id="gameArea" class="hidden">
+            <p>Кликай по мячу, чтобы забить гол!</p>
+            <div class="ball" id="ball"></div>
+        </div>
+    </div>
+    
+    <div id="goalText" class="goal-text">ГОООЛ!</div>
+    
+    <button id="musicBtn">♪</button>
+    
+    <audio id="bgMusic" loop>
+        <!-- Замени эту ссылку на свою музыку -->
+        <source src="dr.mp3" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио.
+    </audio>
+    
+    <script>
+        // Элементы
+        const startBtn = document.getElementById('startBtn');
+        const gameArea = document.getElementById('gameArea');
+        const ball = document.getElementById('ball');
+        const musicBtn = document.getElementById('musicBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        const goalText = document.getElementById('goalText');
+        
+        // Запуск праздника
+        startBtn.addEventListener('click', function() {
+            startBtn.classList.add('hidden');
+            gameArea.classList.remove('hidden');
+            createConfetti();
+            try {
+                bgMusic.play();
+                musicBtn.textContent = '▮▮';
+            } catch(e) {
+                console.log("Автовоспроизведение заблокировано");
+            }
+            document.querySelector('.container').classList.remove('pulse');
+        });
+        
+        // Управление музыкой
+        let isMusicPlaying = false;
+        musicBtn.addEventListener('click', function() {
+            if(isMusicPlaying) {
+                bgMusic.pause();
+                musicBtn.textContent = '♪';
+            } else {
+                bgMusic.play();
+                musicBtn.textContent = '▮▮';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        });
+        
+        // Игра с мячом
+        let score = 0;
+        ball.addEventListener('click', function() {
+            score++;
+            
+            // Анимация удара
+            ball.style.transform = 'translateY(-150px) rotate(720deg)';
+            
+            // Анимация "ГОООЛ!"
+            goalText.style.opacity = '1';
+            goalText.style.top = '30%';
+            goalText.style.left = '50%';
+            goalText.style.transform = 'translateX(-50%)';
+            
+            setTimeout(() => {
+                goalText.style.opacity = '0';
+                goalText.style.top = '40%';
+            }, 1000);
+            
+            setTimeout(() => {
+                ball.style.transform = '';
+                // Новое случайное положение
+                ball.style.left = Math.random() * 80 + 10 + '%';
+                ball.style.top = Math.random() * 50 + 30 + '%';
+                
+                if(score % 3 === 0) {
+                    createConfetti();
+                }
+            }, 800);
+        });
+        
+        // Конфетти эффект (синие тона)
+        function createConfetti() {
+            const colors = ['#4fc3f7', '#1976d2', '#64b5f6', '#90caf9', '#bbdefb'];
+            
+            for(let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-20px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.zIndex = '1000';
+                confetti.style.opacity = Math.random() + 0.2;
+                
+                document.body.appendChild(confetti);
+                
+                // Анимация падения
+                const duration = Math.random() * 3 + 2;
+                confetti.style.transition = `top ${duration}s linear, transform ${duration}s ease-out, opacity ${duration}s`;
+                
+                setTimeout(() => {
+                    confetti.style.top = '100vh';
+                    confetti.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                    confetti.style.opacity = '0';
+                    
+                    // Удаление после анимации
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, duration * 1000);
+                }, 10);
+            }
+        }
+        
+        // Стартовая позиция мяча
+        ball.style.left = '50%';
+        ball.style.top = '60%';
+        ball.style.transform = 'translate(-50%, -50%)';
+    </script>
+</body>
+</html>

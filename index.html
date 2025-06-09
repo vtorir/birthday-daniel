@@ -34,7 +34,6 @@
             font-size: 2.2em;
         }
         
-        /* Стили для мяча - теперь с гарантированно работающей картинкой */
         .ball {
             position: absolute;
             width: 80px;
@@ -44,10 +43,13 @@
             transition: transform 0.2s;
             filter: drop-shadow(0 0 8px #4fc3f7);
             z-index: 100;
+            left: 50%;
+            top: calc(50% + 20px); /* На 20px ниже центра */
+            transform: translate(-50%, -50%);
         }
         
         .ball:hover {
-            transform: scale(1.2);
+            transform: translate(-50%, -50%) scale(1.2);
         }
         
         button {
@@ -72,15 +74,35 @@
             height: 200px;
             margin-top: 20px;
         }
+        
+        .goal-text {
+            position: absolute;
+            font-size: 3em;
+            font-weight: bold;
+            color: #4fc3f7;
+            text-shadow: 0 0 15px white;
+            opacity: 0;
+            transition: all 0.5s;
+            pointer-events: none;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        #startBtn {
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>⚽ Даниил, с Днём Рождения! ⚽</h1>
-        <p>Кликай по мячу, чтобы забить гол!</p>
+        <button id="startBtn">Запустить праздник!</button>
         
-        <div id="gameArea">
+        <div id="gameArea" class="hidden">
+            <p>Кликай по мячу, чтобы забить гол!</p>
             <div class="ball" id="ball"></div>
+            <div class="goal-text" id="goalText">ГОООЛ!</div>
         </div>
     </div>
     
@@ -91,31 +113,68 @@
     <script>
         const ball = document.getElementById('ball');
         const bgMusic = document.getElementById('bgMusic');
+        const startBtn = document.getElementById('startBtn');
+        const gameArea = document.getElementById('gameArea');
+        const goalText = document.getElementById('goalText');
         
-        // Стартовая позиция мяча (центр игровой области)
-        ball.style.left = '50%';
-        ball.style.top = '50%';
-        ball.style.transform = 'translate(-50%, -50%)';
+        // Показываем игровую область при нажатии кнопки
+        startBtn.addEventListener('click', function() {
+            startBtn.classList.add('hidden');
+            gameArea.classList.remove('hidden');
+        });
         
         // Обработчик клика по мячу
         ball.addEventListener('click', function() {
             // Анимация удара
             ball.style.transform = 'translate(-50%, -150%) rotate(360deg)';
             
+            // Показываем "ГОООЛ!"
+            goalText.style.opacity = '1';
             setTimeout(() => {
-                // Возвращаем мяч в центр после удара
+                goalText.style.opacity = '0';
+            }, 1000);
+            
+            // Запускаем конфетти
+            createConfetti();
+            
+            // Включаем музыку
+            bgMusic.play();
+            
+            // Возвращаем мяч через 0.5 сек
+            setTimeout(() => {
                 ball.style.transform = 'translate(-50%, -50%)';
             }, 500);
-            
-            // Воспроизводим звук удара (можно заменить)
-            new Audio('dr.mp3').play();
         });
         
-        // Автовоспроизведение музыки после первого клика
-        document.body.addEventListener('click', function initMusic() {
-            bgMusic.play();
-            document.body.removeEventListener('click', initMusic);
-        }, { once: true });
+        // Функция конфетти
+        function createConfetti() {
+            const colors = ['#4fc3f7', '#1976d2', '#64b5f6', '#90caf9'];
+            
+            for(let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.borderRadius = '50%';
+                
+                document.body.appendChild(confetti);
+                
+                const duration = Math.random() * 3 + 2;
+                confetti.style.transition = `top ${duration}s linear, transform ${duration}s ease-out`;
+                
+                setTimeout(() => {
+                    confetti.style.top = '100vh';
+                    confetti.style.transform = 'rotate(720deg)';
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, duration * 1000);
+                }, 10);
+            }
+        }
     </script>
 </body>
 </html>
